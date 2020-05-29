@@ -15,6 +15,10 @@
 		276DB7D72472B8E0008CAD2D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 276DB7D52472B8E0008CAD2D /* LaunchScreen.storyboard */; };
 		276DB7DF2472B949008CAD2D /* SQLiteCRUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276DB7DE2472B949008CAD2D /* SQLiteCRUD.swift */; };
 		276DB7E12472BB2E008CAD2D /* AppUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276DB7E02472BB2E008CAD2D /* AppUser.swift */; };
+		27F773A4248152EB00C1DD9D /* TransferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F773A3248152EB00C1DD9D /* TransferService.swift */; };
+		27F773AA24815A9100C1DD9D /* SendingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F773A924815A9100C1DD9D /* SendingController.swift */; };
+		27F773AD2481623C00C1DD9D /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27F773AC2481623C00C1DD9D /* MapKit.framework */; };
+		27F773AF24817ACC00C1DD9D /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27F773AE24817ACC00C1DD9D /* NotificationService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +32,10 @@
 		276DB7D82472B8E0008CAD2D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		276DB7DE2472B949008CAD2D /* SQLiteCRUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLiteCRUD.swift; sourceTree = "<group>"; };
 		276DB7E02472BB2E008CAD2D /* AppUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUser.swift; sourceTree = "<group>"; };
+		27F773A3248152EB00C1DD9D /* TransferService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferService.swift; sourceTree = "<group>"; };
+		27F773A924815A9100C1DD9D /* SendingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendingController.swift; sourceTree = "<group>"; };
+		27F773AC2481623C00C1DD9D /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		27F773AE24817ACC00C1DD9D /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				27F773AD2481623C00C1DD9D /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -46,6 +55,7 @@
 			children = (
 				276DB7C92472B8DA008CAD2D /* CTS */,
 				276DB7C82472B8DA008CAD2D /* Products */,
+				27F773AB2481623C00C1DD9D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -69,8 +79,19 @@
 				276DB7D82472B8E0008CAD2D /* Info.plist */,
 				276DB7DE2472B949008CAD2D /* SQLiteCRUD.swift */,
 				276DB7E02472BB2E008CAD2D /* AppUser.swift */,
+				27F773A3248152EB00C1DD9D /* TransferService.swift */,
+				27F773A924815A9100C1DD9D /* SendingController.swift */,
+				27F773AE24817ACC00C1DD9D /* NotificationService.swift */,
 			);
 			path = CTS;
+			sourceTree = "<group>";
+		};
+		27F773AB2481623C00C1DD9D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				27F773AC2481623C00C1DD9D /* MapKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -146,9 +167,12 @@
 			files = (
 				276DB7CF2472B8DA008CAD2D /* ViewController.swift in Sources */,
 				276DB7E12472BB2E008CAD2D /* AppUser.swift in Sources */,
+				27F773AA24815A9100C1DD9D /* SendingController.swift in Sources */,
 				276DB7CB2472B8DA008CAD2D /* AppDelegate.swift in Sources */,
+				27F773AF24817ACC00C1DD9D /* NotificationService.swift in Sources */,
 				276DB7CD2472B8DA008CAD2D /* SceneDelegate.swift in Sources */,
 				276DB7DF2472B949008CAD2D /* SQLiteCRUD.swift in Sources */,
+				27F773A4248152EB00C1DD9D /* TransferService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

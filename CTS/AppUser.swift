@@ -21,4 +21,8 @@ class AppUser{
         datefromatter.dateStyle = .medium
         self.timeStamp = datefromatter.date(from: timeStamp)!
     }
+    
+    static func generateAnAPPID() ->String{
+        return UUID().uuidString
+    }
 }
