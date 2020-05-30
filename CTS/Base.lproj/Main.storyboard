@@ -29,6 +29,12 @@
                                     <action selector="notifiy:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tIV-by-Xid"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Press the home button after tap simulate notification" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7g3-hX-XH1">
+                                <rect key="frame" x="6" y="356" width="402" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
@@ -36,6 +42,8 @@
                             <constraint firstItem="YuE-Rq-zta" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="0.5" id="Ol9-4W-tNo"/>
                             <constraint firstItem="3tk-Ue-ZBa" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="R4p-CH-d30"/>
                             <constraint firstItem="YuE-Rq-zta" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="YPB-7f-J57"/>
+                            <constraint firstItem="7g3-hX-XH1" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="ban-Lc-JFO"/>
+                            <constraint firstItem="3tk-Ue-ZBa" firstAttribute="top" secondItem="7g3-hX-XH1" secondAttribute="bottom" constant="21" id="d3e-RT-DcA"/>
                             <constraint firstItem="YuE-Rq-zta" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="zDH-7P-5Qv"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -59,8 +67,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Broadcasting: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="29q-Fc-7CU">
-                                <rect key="frame" x="152" y="328.5" width="110" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Not Broadcasting yet..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="29q-Fc-7CU">
+                                <rect key="frame" x="119.5" y="328.5" width="175" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>

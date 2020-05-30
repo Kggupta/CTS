@@ -12,15 +12,13 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if UserDefaults.standard.object(forKey: "APPID") == nil{
-            UserDefaults.standard.set(AppUser.generateAnAPPID(), forKey: "APPID")
-        }
+        AppUser.initID()
         NotificationService.center.requestAuthorization(options:[.alert,.sound]) { (granted, error) in
             print("Granted: \(granted)")
         }
     }
+    
     @IBAction func notifiy(_ sender: Any) {
-        print("hello")
         NotificationService.scheduleNotif()
     }
 }

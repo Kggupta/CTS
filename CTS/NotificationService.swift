@@ -23,20 +23,21 @@ class NotificationService{
         return content
     }
     
+    //Randomly pick between infected or not. Override this
     static private func getStatus() -> Int{
         return infected.randomElement()!
     }
     
     static private func getEmoji(nFlag:Int) ->String{
         if nFlag == 1{
-            return "😃"
+            return "😃"//Not infected
         }else{
-            return "😢"
+            return "😢"//Infected
         }
     }
     
     static func scheduleNotif(){
-        //10 seconds for testing purposes
+        //10 seconds for testing purposes. Gives time for dev to leave the app. Wait a few seconds and the notification will pop up.
         let date = Date().addingTimeInterval(10)
         let dateComponents = Calendar.current.dateComponents([.year,.month,.day,.hour,.minute,.second], from: date)
         

@@ -10,6 +10,9 @@ import UIKit
 import CoreBluetooth
 import os
 
+
+//Note that some functions have been taken from the official documentation
+//https://developer.apple.com/documentation/corebluetooth/transferring_data_between_bluetooth_low_energy_devices
 class SendingController: UIViewController {
     
     //MARK: - Demonstration labels (can be deleted)
@@ -17,15 +20,15 @@ class SendingController: UIViewController {
     @IBOutlet weak var receiving: UILabel!
     
     //MARK: - Broadcasting Variables
-    var peripheralManager: CBPeripheralManager!
+    var broadcastingManager: CBPeripheralManager!
     var APPID = UserDefaults.standard.object(forKey: "APPID") as! String
-    var transferCharacteristic: CBMutableCharacteristic?
-    var connectedCentral: CBCentral?
+    var broadcastTransferCharacteristic: CBMutableCharacteristic?
+    var connectedDevice: CBCentral?
     var dataToSend = Data()
     var sendDataIndex: Int = 0
     var timer = Timer()
     var seconds = 25
-    
+    var broadcastingInterval = 10
     //MARK: - Receiving variables
     var NAPPID = ""
     var centralManager: CBCentralManager!
@@ -46,21 +49,24 @@ class SendingController: UIViewController {
 
     }
 
+    //Function that schedules broadcasts and creates the receiver
     func scheduledTimerWithTimeInterval(){
         centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionShowPowerAlertKey: true])
-        peripheralManager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey: true])
+        broadcastingManager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionShowPowerAlertKey: true])
         timer = Timer.scheduledTimer(timeInterval: TimeInterval(seconds), target: self, selector: #selector(self.broadcast), userInfo: nil, repeats: true)
     }
 
+    //Begin broadcasting
     @objc func broadcast(){
-        broadcasting.text = "Currently Broadcasting: \(APPID)"
-        peripheralManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [TransferService.serviceUUID]])
-        timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(self.finish), userInfo: nil, repeats: false)
+        broadcasting.text = "Currently Broadcasting: \(APPID)"//This line can be removed. it is just for the demonstration
+        broadcastingManager.startAdvertising([CBAdvertisementDataServiceUUIDsKey: [TransferService.serviceUUID]])
+        timer = Timer.scheduledTimer(timeInterval: TimeInterval(broadcastingInterval), target: self, selector: #selector(self.finish), userInfo: nil, repeats: false)
 
     }
         
+    //Stop advertising on finish
     @objc func finish(){
-        peripheralManager.stopAdvertising()
+        broadcastingManager.stopAdvertising()
         broadcasting.text = "Not Broadcasting"
         print("Finished broadcasting")
     }
@@ -72,16 +78,16 @@ class SendingController: UIViewController {
      */
     static var sendingEOM = false
     
+    //This code is from the official documentation
     private func sendData() {
-        
-        guard let transferCharacteristic = transferCharacteristic else {
+        guard let transferCharacteristic = broadcastTransferCharacteristic else {
             return
         }
         
         // First up, check if we're meant to be sending an EOM
         if SendingController.sendingEOM {
             // send it
-            let didSend = peripheralManager.updateValue("EOM".data(using: .utf8)!, for: transferCharacteristic, onSubscribedCentrals: nil)
+            let didSend = broadcastingManager.updateValue("EOM".data(using: .utf8)!, for: transferCharacteristic, onSubscribedCentrals: nil)
             // Did it send?
             if didSend {
                 // It did, so mark it as sent
@@ -105,7 +111,7 @@ class SendingController: UIViewController {
             
             // Work out how big it should be
             var amountToSend = dataToSend.count - sendDataIndex
-            if let mtu = connectedCentral?.maximumUpdateValueLength {
+            if let mtu = connectedDevice?.maximumUpdateValueLength {
                 amountToSend = min(amountToSend, mtu)
             }
             
@@ -113,7 +119,7 @@ class SendingController: UIViewController {
             let chunk = dataToSend.subdata(in: sendDataIndex..<(sendDataIndex + amountToSend))
             
             // Send it
-            didSend = peripheralManager.updateValue(chunk, for: transferCharacteristic, onSubscribedCentrals: nil)
+            didSend = broadcastingManager.updateValue(chunk, for: transferCharacteristic, onSubscribedCentrals: nil)
             
             // If it didn't work, drop out and wait for the callback
             if !didSend {
@@ -133,7 +139,7 @@ class SendingController: UIViewController {
                 SendingController.sendingEOM = true
                 
                 //Send it
-                let eomSent = peripheralManager.updateValue("EOM".data(using: .utf8)!,
+                let eomSent = broadcastingManager.updateValue("EOM".data(using: .utf8)!,
                                                              for: transferCharacteristic, onSubscribedCentrals: nil)
                 
                 if eomSent {
@@ -146,6 +152,7 @@ class SendingController: UIViewController {
         }
     }
 
+    //This code is from the official documentation
     private func setupPeripheral() {
         
         // Build our service.
@@ -163,13 +170,14 @@ class SendingController: UIViewController {
         transferService.characteristics = [transferCharacteristic]
         
         // And add it to the peripheral manager.
-        peripheralManager.add(transferService)
+        broadcastingManager.add(transferService)
         
         // Save the characteristic for later.
-        self.transferCharacteristic = transferCharacteristic
+        self.broadcastTransferCharacteristic = transferCharacteristic
 
     }
     
+    //This code is from the official documentation
     private func retrievePeripheral() {
         
         let connectedPeripherals: [CBPeripheral] = (centralManager.retrieveConnectedPeripherals(withServices: [TransferService.serviceUUID]))
@@ -246,23 +254,21 @@ class SendingController: UIViewController {
 }
 
 extension SendingController: CBPeripheralManagerDelegate {
-    // implementations of the CBPeripheralManagerDelegate methods
+    
+    // when an update to the peripherals (devices within range) is detected
+    // Note that the states are not actually handled. You can put whatever you like in each case
     internal func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
         switch peripheral.state {
         case .poweredOn:
-            // ... so start working with the peripheral
             os_log("CBManager is powered on")
             setupPeripheral()
         case .poweredOff:
             os_log("CBManager is not powered on")
-            // In a real app, you'd deal with all the states accordingly
             return
         case .resetting:
             os_log("CBManager is resetting")
-            // In a real app, you'd deal with all the states accordingly
             return
         case .unauthorized:
-            // In a real app, you'd deal with all the states accordingly
             if #available(iOS 11.0, *) {
                 switch peripheral.authorization {
                 case .denied:
@@ -274,25 +280,24 @@ extension SendingController: CBPeripheralManagerDelegate {
                 }
             } else {
                 // Fallback on earlier versions
+                //Anything for unsupported versions
             }
             return
         case .unknown:
             os_log("CBManager state is unknown")
-            // In a real app, you'd deal with all the states accordingly
             return
         case .unsupported:
             os_log("Bluetooth is not supported on this device")
-            // In a real app, you'd deal with all the states accordingly
             return
         @unknown default:
             os_log("A previously unknown peripheral manager state occurred")
-            // In a real app, you'd deal with yet unknown cases that might occur in the future
             return
         }
     }
 
     /*
      *  Catch when someone subscribes to our characteristic, then start sending them data
+     *  This occurs when a new device is within range
      */
     func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didSubscribeTo characteristic: CBCharacteristic) {
         os_log("Central subscribed to characteristic")
@@ -304,7 +309,7 @@ extension SendingController: CBPeripheralManagerDelegate {
         sendDataIndex = 0
         
         // save central
-        connectedCentral = central
+        connectedDevice = central
         
         // Start sending
         sendData()
@@ -312,10 +317,11 @@ extension SendingController: CBPeripheralManagerDelegate {
     
     /*
      *  Recognize when the central unsubscribes
+     *  This occurs when the device has left (out or range, disconnected, not discoverable)
      */
     func peripheralManager(_ peripheral: CBPeripheralManager, central: CBCentral, didUnsubscribeFrom characteristic: CBCharacteristic) {
         os_log("Central unsubscribed from characteristic")
-        connectedCentral = nil
+        connectedDevice = nil
     }
     
     /*
@@ -343,6 +349,7 @@ extension SendingController: CBPeripheralManagerDelegate {
     }
 }
 
+//This is taken from the official documentation with some modifications
 extension SendingController: CBCentralManagerDelegate {
     // implementations of the CBCentralManagerDelegate methods
 
@@ -353,22 +360,18 @@ extension SendingController: CBCentralManagerDelegate {
      *  the Central is ready to be used.
      */
     internal func centralManagerDidUpdateState(_ central: CBCentralManager) {
-
+        //Handle each state as they need to be.
         switch central.state {
         case .poweredOn:
-            // ... so start working with the peripheral
             os_log("CBManager is powered on")
             retrievePeripheral()
         case .poweredOff:
             os_log("CBManager is not powered on")
-            // In a real app, you'd deal with all the states accordingly
             return
         case .resetting:
             os_log("CBManager is resetting")
-            // In a real app, you'd deal with all the states accordingly
             return
         case .unauthorized:
-            // In a real app, you'd deal with all the states accordingly
             if #available(iOS 11.0, *) {
                 switch central.authorization {
                 case .denied:
@@ -384,15 +387,12 @@ extension SendingController: CBCentralManagerDelegate {
             return
         case .unknown:
             os_log("CBManager state is unknown")
-            // In a real app, you'd deal with all the states accordingly
             return
         case .unsupported:
             os_log("Bluetooth is not supported on this device")
-            // In a real app, you'd deal with all the states accordingly
             return
         @unknown default:
             os_log("A previously unknown central manager state occurred")
-            // In a real app, you'd deal with yet unknown cases that might occur in the future
             return
         }
     }
@@ -476,6 +476,7 @@ extension SendingController: CBCentralManagerDelegate {
 
 }
 
+//This is taken from the official documentation with some modifications
 extension SendingController: CBPeripheralDelegate {
     // implementations of the CBPeripheralDelegate methods
 

@@ -15,8 +15,8 @@ class SQLiteService{
     static private let fileURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("CTS.sqlite")
     static private let queryString = "INSERT INTO CTS (APPID, timestamp) VALUES (?, ?)"
     
-    //Create database
-    static func create(){
+    //Creates (opens) database
+    static func open(){
         if sqlite3_open(fileURL.path, &db) != SQLITE_OK {
             print("error opening database")
         }
@@ -27,7 +27,7 @@ class SQLiteService{
     
     //Read to array of appuser object
     static func read() -> [AppUser]?{
-        self.create()
+        self.open()
         
         let queryString = "SELECT * FROM CTS"
         var stmt:OpaquePointer?
@@ -55,11 +55,11 @@ class SQLiteService{
     static func update(APPID:NSString, timestamp:Date){
         var stmt:OpaquePointer?
         let datefromatter = DateFormatter()
-        datefromatter.dateStyle = .medium
+        datefromatter.dateStyle = .medium//You can customize this however you like. "medium" stores month, year, date
         
         let SQLITE_TRANSIENT = unsafeBitCast(-1, to: sqlite3_destructor_type.self)
 
-        self.create()
+        self.open()
         
         if sqlite3_prepare(db, queryString, -1, &stmt, nil) != SQLITE_OK{
             print("error preparing insert")
@@ -80,7 +80,7 @@ class SQLiteService{
     
     //Delete with its autoincrement value
     static func delete(key:Int32){
-        self.create()
+        self.open()
         
         let deleteStmt = "DELETE FROM CTS WHERE id = \(key)"
         var stmt:OpaquePointer?
@@ -97,9 +97,9 @@ class SQLiteService{
     
     //Overloaded Delete for appid
     static func delete(APPID:String){
-        self.create()
+        self.open()
         
-        let deleteStmt = "DELETE FROM CTS WHERE APPID = \(APPID)"
+        let deleteStmt = "DELETE FROM CTS WHERE APPID = '\(APPID)'"//As the appids are all unique this wont cause any problems with deleteing multiple people
         var stmt:OpaquePointer?
         
         if sqlite3_prepare(db, deleteStmt, -1, &stmt, nil) == SQLITE_OK {
